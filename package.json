@@ -1,0 +1,19 @@
+{
+  "name": "srm",
+  "private": true,
+  "engines": {
+    "node": ">=v20.3.1"
+  },
+  "packageManager": "pnpm@8.6.3",
+  "scripts": {
+    "dev": "dotenv -- turbo dev --parallel",
+    "lint": "turbo lint && manypkg check",
+    "lint:fix": "turbo lint:fix && manypkg fix",
+    "check": "manypkg upgrade @trpc/server@10.34.0 @trpc/client@10.34.0"
+  },
+  "dependencies": {
+    "@manypkg/cli": "^0.21.0",
+    "dotenv-cli": "^7.2.1",
+    "turbo": "^1.10.12"
+  }
+}

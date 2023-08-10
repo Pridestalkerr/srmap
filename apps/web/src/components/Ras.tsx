@@ -38,15 +38,12 @@ import axios from "axios";
 import Navbar from "@/components/Navbar";
 import { cn } from "@/lib/utils";
 import usePagination from "./Pagination";
+import { RouterOutputs, api } from "@/lib/trpc";
+import { useState, useEffect } from "react";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+type Employee = RouterOutputs["ras"]["scroll"]["results"][0];
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Employee>[] = [
   {
     accessorKey: "Employee Code",
     header: "Employee Code",
@@ -136,31 +133,30 @@ export default function Ras({
   selected: { [key: string]: any };
   setSelected: React.Dispatch<React.SetStateAction<{}>>;
 }) {
-  const [totalRows, setTotalRows] = React.useState(0);
+  const [totalRows, setTotalRows] = useState(0);
   const { currentPage, onNextPage, onPrevPage, canGoBack, canGoNext } =
     usePagination({
       totalRows,
       rowsPerPage: 10,
     });
-  const [data, setData] = React.useState<Payment[]>([]);
-  React.useEffect(() => {
-    axios
-      .get("http://192.168.1.128:3333/ras", {
-        params: {
-          size: 10,
-          from: currentPage * 10 - 10,
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data.documents);
-        setTotalRows(res.data.total);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currentPage]);
+
+  const { data, refetch } = api.ras.scroll.useQuery(
+    {
+      size: 10,
+      from: currentPage * 10 - 10,
+    },
+    {
+      enabled: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const documents = data?.results || [];
+  useEffect(() => {
+    if (data) {
+      console.log("total: ", data?.total);
+      setTotalRows(data?.total || 0);
+    }
+  }, [data]);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -171,7 +167,7 @@ export default function Ras({
   //   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: documents,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -248,25 +244,30 @@ export default function Ras({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPrevPage()}
-            disabled={!canGoBack}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNextPage()}
-            disabled={!canGoNext}
-          >
-            Next
-          </Button>
-          Page {currentPage} of {Math.ceil(totalRows / 10)}
+      <div className="flex items-center w-full space-x-2 py-4 px-4">
+        <div className="flex flex-row w-full justify-between">
+          <p className="text-sm">
+            Page {currentPage} of {Math.ceil(totalRows / 10)}
+          </p>
+
+          <div className="flex flex-row gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPrevPage()}
+              disabled={!canGoBack}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onNextPage()}
+              disabled={!canGoNext}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>

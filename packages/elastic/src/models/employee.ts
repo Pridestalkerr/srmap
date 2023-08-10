@@ -1,6 +1,6 @@
 import type { Client } from "@elastic/elasticsearch";
 
-interface Employee {
+export interface Employee {
   "Employee Code": string; // TODO: this might be a number, check
   "Employee Name": string;
   "RAS Status Group": string;
@@ -96,12 +96,19 @@ export const employees = (client: Client) => {
         },
       });
 
+      let total = 0;
+      if (res.hits.total instanceof Object) {
+        total = res.hits.total.value;
+      } else {
+        total = res.hits.total || 0;
+      }
+
       return {
         documents: res?.hits.hits.map((hit) => ({
           ...hit._source,
           score: hit._score,
         })),
-        total: res.hits.total,
+        total,
       };
     },
   };

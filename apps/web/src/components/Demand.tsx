@@ -13,8 +13,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-
+import { ArrowUpDown, ChevronDown, Eye, MoreHorizontal } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,15 +45,12 @@ import {
 import axios from "axios";
 import Navbar from "@/components/Navbar";
 import usePagination from "./Pagination";
+import { RouterOutputs, api } from "@/lib/trpc";
+import { useEffect, useState } from "react";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+type Project = RouterOutputs["demand"]["scroll"]["results"][0];
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Project>[] = [
   {
     accessorKey: "SR Number",
     header: "SR Number",
@@ -79,6 +84,11 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => <div>{row.getValue("Primary Skill")}</div>,
   },
   {
+    accessorKey: "Country",
+    header: "Country",
+    cell: ({ row }) => <div>{row.getValue("Country")}</div>,
+  },
+  {
     accessorKey: "score",
     header: "Score",
     cell: ({ row }) => (
@@ -87,6 +97,27 @@ export const columns: ColumnDef<Payment>[] = [
           maximumFractionDigits: 2,
           minimumFractionDigits: 2,
         })}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "Job Description",
+    header: "Job Description",
+    cell: ({ row }) => (
+      <div className="flex flex-row justify-center items-center">
+        <Dialog>
+          <DialogTrigger>
+            <Eye />
+          </DialogTrigger>
+          <DialogContent className="sm:min-w-[800px]">
+            <DialogHeader>
+              <DialogTitle>{row.getValue("Primary Skill")}</DialogTitle>
+              <DialogDescription>
+                {row.getValue("Job Description")}
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
     ),
   },
@@ -126,42 +157,31 @@ export const columns: ColumnDef<Payment>[] = [
   //   },
 ];
 export default function Demand({ skills }: { skills: string }) {
-  const [data, setData] = React.useState<Payment[]>([]);
-  const [totalRows, setTotalRows] = React.useState(0);
-  const {
-    currentPage,
-    onNextPage,
-    onPrevPage,
-    canGoBack,
-    canGoNext,
-    setCurrentPage,
-  } = usePagination({
-    totalRows,
-    rowsPerPage: 10,
-  });
-  React.useEffect(() => {
-    axios
-      .get("http://192.168.1.128:3333/demand", {
-        params: {
-          skills: skills,
-          size: 10,
-          from: currentPage * 10 - 10,
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data.documents);
-        setData(res.data.documents);
-        setTotalRows(res.data.total);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [skills, currentPage]);
+  const [totalRows, setTotalRows] = useState(0);
+  const { currentPage, onNextPage, onPrevPage, canGoBack, canGoNext } =
+    usePagination({
+      totalRows,
+      rowsPerPage: 10,
+    });
 
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [skills, setCurrentPage]);
+  const { data, refetch } = api.demand.scroll.useQuery(
+    {
+      size: 10,
+      from: currentPage * 10 - 10,
+      skills: skills,
+    },
+    {
+      enabled: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const documents = data?.results || [];
+  useEffect(() => {
+    if (data) {
+      console.log("total: ", data?.total);
+      setTotalRows(data?.total || 0);
+    }
+  }, [data]);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -169,10 +189,10 @@ export default function Demand({ skills }: { skills: string }) {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  //   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: documents,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -181,16 +201,16 @@ export default function Demand({ skills }: { skills: string }) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    // onRowSelectionChange: setSelected,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
+      //   rowSelection: selected,
     },
   });
   return (
-    <div>
+    <div className="w-full">
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -216,10 +236,7 @@ export default function Demand({ skills }: { skills: string }) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    alert(row.original["Job Description"]);
-                  }}
+                  //   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -244,25 +261,30 @@ export default function Demand({ skills }: { skills: string }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPrevPage()}
-            disabled={!canGoBack}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNextPage()}
-            disabled={!canGoNext}
-          >
-            Next
-          </Button>
-          Page {currentPage} of {Math.ceil(totalRows / 10)}
+      <div className="flex items-center w-full space-x-2 py-4 px-4">
+        <div className="flex flex-row w-full justify-between">
+          <p className="text-sm">
+            Page {currentPage} of {Math.ceil(totalRows / 10)}
+          </p>
+
+          <div className="flex flex-row gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPrevPage()}
+              disabled={!canGoBack}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onNextPage()}
+              disabled={!canGoNext}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>

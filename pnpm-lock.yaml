@@ -192,6 +192,9 @@ importers:
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
+      vaul:
+        specifier: ^0.2.3
+        version: 0.2.3(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0)
 
   packages/api:
     dependencies:
@@ -216,6 +219,9 @@ importers:
       trpc-openapi:
         specifier: ^1.2.0
         version: 1.2.0(@trpc/server@10.34.0)(zod@3.21.4)
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -5572,6 +5578,20 @@ packages:
   /vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /vaul@0.2.3(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-BEMMkCAQ3ZQ3O2sgwnu7IuD3scBd7sVVr3IN57QpF1NjX+mjSaW2Rn76Dm98eEz3tXiukqRcVAiKE6F4tYwgCA==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      '@radix-ui/react-dialog': 1.0.4(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
     dev: false
 
   /watchpack@2.4.0:

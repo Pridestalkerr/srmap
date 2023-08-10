@@ -21,3 +21,6 @@ export const elastic = {
     };
   },
 };
+
+export { type Employee } from "./models/employee";
+export { type Project } from "./models/project";

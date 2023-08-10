@@ -1,9 +1,11 @@
-import { userRouter } from "./router/ras";
+import { rasRouter } from "./router/ras";
+import { demandRouter } from "./router/demand";
 import { syncRouter } from "./router/sync";
 import { router } from "./trpc";
 
 export const appRouter = router({
-  user: userRouter,
+  ras: rasRouter,
+  demand: demandRouter,
   sync: syncRouter,
 });
 

@@ -30,10 +30,12 @@ export default function Navbar() {
       </div>
 
       <div className="flex flex-row w-full justify-end gap-4">
-        <Dialog>
-          <DialogTrigger>
-            <Button variant="default">Upload</Button>
-          </DialogTrigger>
+        {/* <Dialog>
+          <DialogTrigger> */}
+        <Link href="/upload">
+          <Button variant="default">Upload</Button>
+        </Link>
+        {/* </DialogTrigger>
           <DialogContent className="sm:min-w-[800px]">
             <DialogHeader>
               <DialogTitle>Upload Data</DialogTitle>
@@ -42,9 +44,10 @@ export default function Navbar() {
                 Ras Sheets to continue.
               </DialogDescription>
             </DialogHeader>
-            <Dropzone></Dropzone>
+            <Dropzone file={null} setFile={null}></Dropzone>
+            <Dropzone file={null} setFile={null}></Dropzone>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
         <ThemeToggle></ThemeToggle>
       </div>
     </div>

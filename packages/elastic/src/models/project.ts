@@ -1,6 +1,6 @@
 import type { Client } from "@elastic/elasticsearch";
 
-interface Project {
+export interface Project {
   "Auto req ID": string;
   "SR Number": string;
   "Reporting Manager [vReportingManager1]": string;
@@ -119,12 +119,19 @@ export const projects = (client: Client) => {
         },
       });
 
+      let total = 0;
+      if (res.hits.total instanceof Object) {
+        total = res.hits.total.value;
+      } else {
+        total = res.hits.total || 0;
+      }
+
       return {
         documents: res?.hits.hits.map((hit) => ({
           ...hit._source,
           score: hit._score,
         })),
-        total: res.hits.total,
+        total,
       };
     },
   };

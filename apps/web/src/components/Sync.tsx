@@ -65,7 +65,7 @@ export function Sync() {
           <div className="flex flex-col w-full h-full">
             <div className="text-primary">
               <Status tag={"Employees: "} count={data.ras} />
-              <Status tag={"Projects: "} count={1234453} />
+              <Status tag={"Projects: "} count={data.demand} />
             </div>
           </div>
         )}

@@ -2,28 +2,28 @@
 import z from "zod";
 import { router } from "../trpc";
 import { publicProcedure } from "../trpc";
-import { parseRas } from "../utils/parser";
-import type { Employee } from "@srm/elastic";
+import { parseDemand, parseRas } from "../utils/parser";
+import type { Employee, Project } from "@srm/elastic";
 import { elastic } from "@srm/elastic";
 
 const helloSchema = z.object({
   name: z.string(),
 });
 
-export const rasRouter = router({
+export const demandRouter = router({
   upload: publicProcedure
     .meta({
       openapi: {
         method: "POST",
-        path: "/ras/upload",
-        summary: "Upload RAS",
-        description: "Upload RAS",
-        tags: ["ras"],
+        path: "/demand/upload",
+        summary: "Upload Demand",
+        description: "Upload Demand",
+        tags: ["demand"],
       },
     })
     .input(
       z.object({
-        ras: z.string(),
+        demand: z.string(),
       })
     )
     .output(
@@ -32,10 +32,10 @@ export const rasRouter = router({
       })
     )
     .mutation(async ({ input, ctx: { session } }) => {
-      const buf = Buffer.from(input.ras, "base64");
-      const data = parseRas(buf) as unknown as Employee[];
+      const buf = Buffer.from(input.demand, "base64");
+      const data = parseDemand(buf) as unknown as Project[];
       console.log("actually hitting", data[0]);
-      const inserted = await elastic.employees.bulk({
+      const inserted = await elastic.projects.bulk({
         ownedBy: session,
         documents: data,
       });
@@ -47,36 +47,40 @@ export const rasRouter = router({
     .meta({
       openapi: {
         method: "GET",
-        path: "/ras/scroll",
-        summary: "Scroll RAS",
-        description: "Scroll RAS",
-        tags: ["ras"],
+        path: "/demand/scroll",
+        summary: "Scroll Demand",
+        description: "Scroll Demand",
+        tags: ["demand"],
       },
     })
     .input(
       z.object({
         size: z.number(),
         from: z.number(),
+        skills: z.string(),
       })
     )
     .output(
       z.object({
         results: z.array(
           z.object({
-            "Employee Code": z.string().optional().or(z.number()),
-            "Employee Name": z.string().optional(),
-            "RAS Status Group": z.string().optional(),
-            Skill: z.string().optional(),
+            // "Auto req ID": z.string().optional().or(z.number()),
+            "SR Number": z.string().optional(),
+            "Reqisition Status": z.string().optional(),
+            "Job Description": z.string().optional(),
+            "Primary Skill": z.string().optional(),
+            Country: z.string().optional(),
             score: z.number().nullable().or(z.undefined()),
           })
         ),
         total: z.number().or(z.any()),
       })
     )
-    .query(async ({ input: { size, from }, ctx: { session } }) => {
+    .query(async ({ input: { size, from, skills }, ctx: { session } }) => {
       console.log("actually hitting", size, from, session);
-      const results = await elastic.employees.scroll({
+      const results = await elastic.projects.scroll({
         ownedBy: session,
+        query: skills,
         size,
         from,
       });

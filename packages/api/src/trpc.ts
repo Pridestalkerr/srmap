@@ -31,7 +31,7 @@ export const createTRPCContext = async ({
   }
 
   return {
-    session: "XD",
+    session: token,
   };
 };
 

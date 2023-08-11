@@ -216,9 +216,9 @@ export default function Ras({
                     setSelected(row.original);
                   }}
                   className={cn({
-                    "bg-green-500/40": selected === row.original,
+                    "bg-primary": selected === row.original,
                     // "border border-primary": selected === row.original,
-                    "hover:bg-green-500/40": selected === row.original,
+                    "hover:bg-primary": selected === row.original,
                   })}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -244,15 +244,15 @@ export default function Ras({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center w-full space-x-2 py-4 px-4">
+      <div className="flex items-center w-full space-x-2 py-4">
         <div className="flex flex-row w-full justify-between">
-          <p className="text-sm">
+          <p className="text-sm px-4">
             Page {currentPage} of {Math.ceil(totalRows / 10)}
           </p>
 
           <div className="flex flex-row gap-4">
             <Button
-              variant="outline"
+              // variant="outline"
               size="sm"
               onClick={() => onPrevPage()}
               disabled={!canGoBack}
@@ -260,7 +260,7 @@ export default function Ras({
               Previous
             </Button>
             <Button
-              variant="outline"
+              // variant="outline"
               size="sm"
               onClick={() => onNextPage()}
               disabled={!canGoNext}

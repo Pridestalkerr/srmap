@@ -6,10 +6,6 @@ import { parseRas } from "../utils/parser";
 import type { Employee } from "@srm/elastic";
 import { elastic } from "@srm/elastic";
 
-const helloSchema = z.object({
-  name: z.string(),
-});
-
 export const rasRouter = router({
   upload: publicProcedure
     .meta({

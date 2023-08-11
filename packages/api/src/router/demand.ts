@@ -2,13 +2,9 @@
 import z from "zod";
 import { router } from "../trpc";
 import { publicProcedure } from "../trpc";
-import { parseDemand, parseRas } from "../utils/parser";
-import type { Employee, Project } from "@srm/elastic";
+import { parseDemand } from "../utils/parser";
+import type { Project } from "@srm/elastic";
 import { elastic } from "@srm/elastic";
-
-const helloSchema = z.object({
-  name: z.string(),
-});
 
 export const demandRouter = router({
   upload: publicProcedure

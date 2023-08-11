@@ -1,4 +1,3 @@
-import type { inferAsyncReturnType } from "@trpc/server";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -17,7 +16,8 @@ export interface Context {
 export const createTRPCContext = async ({
   req,
   res,
-}: CreateExpressContextOptions): Promise<Context> => {
+}: // eslint-disable-next-line @typescript-eslint/require-await
+CreateExpressContextOptions): Promise<Context> => {
   const cookies = req.cookies as Record<string, string>;
 
   let token = cookies.token;

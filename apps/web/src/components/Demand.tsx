@@ -261,15 +261,15 @@ export default function Demand({ skills }: { skills: string }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center w-full space-x-2 py-4 px-4">
+      <div className="flex items-center w-full space-x-2 py-4">
         <div className="flex flex-row w-full justify-between">
-          <p className="text-sm">
+          <p className="text-sm px-4">
             Page {currentPage} of {Math.ceil(totalRows / 10)}
           </p>
 
           <div className="flex flex-row gap-4">
             <Button
-              variant="outline"
+              // variant="outline"
               size="sm"
               onClick={() => onPrevPage()}
               disabled={!canGoBack}
@@ -277,7 +277,7 @@ export default function Demand({ skills }: { skills: string }) {
               Previous
             </Button>
             <Button
-              variant="outline"
+              // variant="outline"
               size="sm"
               onClick={() => onNextPage()}
               disabled={!canGoNext}

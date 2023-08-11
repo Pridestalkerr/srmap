@@ -10,6 +10,8 @@ import {
 import { api } from "@/lib/trpc";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 export function Sync() {
   const { isLoading, error, data } = api.sync.useQuery();
@@ -58,14 +60,19 @@ export function Sync() {
         <CardDescription>Data sync</CardDescription>
         <Separator orientation="horizontal" />
       </CardHeader>
-      <CardContent className="w-full h-full flex p-4">
+      <CardContent className="w-full h-full flex flex-col p-4">
         {isLoading && <ContentForLoading></ContentForLoading>}
         {error && <ContentForError></ContentForError>}
         {data && (
-          <div className="flex flex-col w-full h-full">
-            <div className="text-primary">
+          <div className="flex flex-col w-full h-full gap-2">
+            <div className="">
               <Status tag={"Employees: "} count={data.ras} />
               <Status tag={"Projects: "} count={data.demand} />
+            </div>
+            <div className="flex flex-row justify-center">
+              <Link href="/upload">
+                <Button type="button">Upload</Button>
+              </Link>
             </div>
           </div>
         )}

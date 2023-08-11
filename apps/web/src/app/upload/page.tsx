@@ -1,9 +1,20 @@
 "use client";
 import Dropzone from "@/components/Dropzone";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/trpc";
 // import Separator from "@/components/ui/separator"
 import { useEffect, useMemo, useState } from "react";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import SyncZone from "@/components/SyncZone";
 
 export default function Home() {
   const [selected, setSelected] = useState<{}>({});
@@ -61,36 +72,45 @@ export default function Home() {
   const demandUpload = api.demand.upload.useMutation({});
 
   return (
-    <div className="flex-grow flex flex-row justify-around items-center">
-      <div className="flex flex-col justify-center items-center gap-4">
-        <Dropzone
-          file={rasFile}
-          setFile={setRasFile}
-          title="RAS Sheet"
-        ></Dropzone>
-        <Button
-          type="button"
-          onClick={() => {
-            rasUpload.mutate({
-              ras: rasBase64 as string, // TODO: fix this
-            });
-          }}
-          disabled={rasFile === null}
-        >
-          {rasFile === null ? "Select a file" : `Upload "${rasFile.name}"`}
-        </Button>
-        {rasUpload.isLoading && <p>Uploading...</p>}
-        {rasUpload.isSuccess && (
-          <p>Uploaded {rasUpload.data.inserted} Documents!</p>
-        )}
-      </div>
+    <div className="flex-grow flex flex-col justify-around items-center p-4">
+      <Card>
+        <CardHeader className="flex flex-col gap-4">
+          <SyncZone
+            title="RAS"
+            subTitle="Update or Clear your RAS records."
+            submit={() => {
+              rasUpload.mutate({
+                ras: rasBase64 as string, // TODO: fix this
+              });
+            }}
+            submitDisabled={rasFile === null}
+            file={rasFile}
+            setFile={setRasFile}
+          ></SyncZone>
 
-      {/* <Separator orientation="vertical"></Separator> */}
-      <div className="flex flex-col justify-center items-center gap-4">
+          <Separator orientation="horizontal"></Separator>
+
+          <SyncZone
+            title="Demand"
+            subTitle="Update or Clear your Demand records."
+            submit={() => {
+              demandUpload.mutate({
+                demand: demandBase64 as string, // TODO: fix this
+              });
+            }}
+            submitDisabled={demandFile === null}
+            file={demandFile}
+            setFile={setDemandFile}
+          ></SyncZone>
+        </CardHeader>
+      </Card>
+
+      {/* <div className="flex flex-col justify-center items-center gap-4">
+        <h1>Demand</h1>
         <Dropzone
           file={demandFile}
           setFile={setDemandFile}
-          title="RAS Sheet"
+          title="Demand Sheet"
         ></Dropzone>
         <Button
           type="button"
@@ -101,15 +121,13 @@ export default function Home() {
           }}
           disabled={demandFile === null}
         >
-          {demandFile === null
-            ? "Select a file"
-            : `Upload "${demandFile.name}"`}
+          Submit
         </Button>
         {demandUpload.isLoading && <p>Uploading...</p>}
         {demandUpload.isSuccess && (
           <p>Uploaded {demandUpload.data.inserted} Documents!</p>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -53,8 +53,12 @@ export default function SyncZone({
     );
   };
 
-  const [minWidth, setMinWidth] = useState(0);
-  const secondDivRef = useRef(null);
+  const trimTitle = (title: string) => {
+    if (title.length > 15) {
+      return `"${title.slice(0, 20)}..."`;
+    }
+    return `"${title}"`;
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -86,41 +90,15 @@ export default function SyncZone({
         >
           Clear
         </Button>
-        <div className="flex flex-col">
-          <p className="text-sm">No file selected</p>
+        <div className="flex flex-row gap-2">
+          <p className="text-sm">
+            {file === null ? "No file selected" : trimTitle(file.name)}
+          </p>
           <Button type="button" onClick={submit} disabled={submitDisabled}>
             Submit
           </Button>
         </div>
       </div>
     </div>
-    // <Card>
-    //   <CardHeader className="flex flex-row justify-between align-start space-y-0">
-    //     <div>
-    //       <CardTitle>{title}</CardTitle>
-    //       <CardDescription>{subTitle}</CardDescription>
-    //     </div>
-    //     <Button
-    //       type="button"
-    //       variant="destructive"
-    //       onClick={submit}
-    //       disabled={submitDisabled}
-    //     >
-    //       Clear
-    //     </Button>
-    //   </CardHeader>
-    //   <CardContent className="flex flex-col gap-4">
-    //     <div className="flex flex-row justify-between align-center">
-    //       <div className="flex flex-col gap-2">
-    //         <p>Live Records: 333</p>
-    //       </div>
-    //     </div>
-    //     {/* <Separator orientation="horizontal" /> */}
-    //     <Dropzone file={file} setFile={setFile} title="Demand Sheet"></Dropzone>
-    //     <Button type="button" onClick={submit} disabled={submitDisabled}>
-    //       Submit
-    //     </Button>
-    //   </CardContent>
-    // </Card>
   );
 }

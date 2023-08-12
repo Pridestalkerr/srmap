@@ -49,29 +49,7 @@ const Dropzone = ({
     <div
       {...getRootPropsRas()}
       className="rounded-sm border border-solid bg-muted/30 w-[350px] h-[250px] flex flex-col items-stretch"
-      //       background-color: #ffffff;
-      // opacity: 0.1;
-      // background-size: 9px 9px;
-      // background-image: repeating-linear-gradient(45deg, #f0f0ff 0, #f0f0ff 0.9px, #ffffff 0, #ffffff 50%);
-      // style={{
-      //   backgroundImage: `repeating-linear-gradient(45deg, #f0f0ff 0, #f0f0ff 0.9px, #ffffff 0, #ffffff 50%)`,
-      //   opacity: 1,
-      //   backgroundSize: "9px 9px",
-      //   backgroundColor: "#ffffff",
-      // }}
     >
-      {/* <div
-        className={cn(
-          "text-primary text-sm absolute m-4 flex flex-row gap-2 justify-center items-center",
-          {
-            "text-[#ff0000]": file === null,
-            "text-[#00ff00]": file !== null,
-          }
-        )}
-      >
-        <Upload></Upload>
-        <span>{file === null ? "No file selected" : trimTitle(file.name)}</span>
-      </div> */}
       <div className="flex flex-col h-full justify-center gap-2">
         <input {...getInputPropsRas()} />
         <span className="text-center">Drag and drop your file here or</span>

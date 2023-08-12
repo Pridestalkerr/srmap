@@ -85,4 +85,26 @@ export const demandRouter = router({
         total: results.total,
       };
     }),
+  clear: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/demand/clear",
+        summary: "Clear Demand",
+        description: "Clear Demand",
+        tags: ["demand"],
+      },
+    })
+    .input(z.void())
+    .output(
+      z.object({
+        deleted: z.number(),
+      })
+    )
+    .query(async ({ ctx: { session } }) => {
+      const deleted = await elastic.projects.clear({ ownedBy: session });
+      return {
+        deleted: deleted ?? 0,
+      };
+    }),
 });

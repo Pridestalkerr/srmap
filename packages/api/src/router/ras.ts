@@ -81,4 +81,28 @@ export const rasRouter = router({
         total: results.total,
       };
     }),
+  clear: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/ras/clear",
+        summary: "Clear RAS",
+        description: "Clear RAS",
+        tags: ["ras"],
+      },
+    })
+    .input(z.void())
+    .output(
+      z.object({
+        deleted: z.number(),
+      })
+    )
+    .query(async ({ ctx: { session } }) => {
+      const deleted = await elastic.employees.clear({
+        ownedBy: session,
+      });
+      return {
+        deleted: deleted ?? 0,
+      };
+    }),
 });

@@ -134,5 +134,18 @@ export const projects = (client: Client) => {
         total,
       };
     },
+    clear: async ({ ownedBy }: { ownedBy: string }) => {
+      const res = await client.deleteByQuery({
+        index: indexName,
+        body: {
+          query: {
+            term: { ownedBy },
+          },
+        },
+      });
+
+      // TODO: check for errors or whatever can be returned
+      return res.deleted;
+    },
   };
 };

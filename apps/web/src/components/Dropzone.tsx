@@ -48,14 +48,20 @@ const Dropzone = ({
   return (
     <div
       {...getRootPropsRas()}
-      className="rounded-sm border border-solid bg-muted/30 w-[350px] h-[250px] flex flex-col items-stretch"
+      className="rounded-sm border border-dashed w-[350px] h-[250px] flex flex-col items-stretch"
     >
       <div className="flex flex-col h-full justify-center gap-2">
         <input {...getInputPropsRas()} />
-        <span className="text-center">Drag and drop your file here or</span>
+        <span className="flex flex-row justify-center">
+          <Upload />
+        </span>
+        <span className="text-center text-lg">
+          Drag and drop your file here
+        </span>
+        <span className="text-center text-primary/90">or</span>
         <div className="flex flex-row justify-center">
           <Button type="button" onClick={openRas}>
-            Select a file
+            Browse files
           </Button>
         </div>
       </div>

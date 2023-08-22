@@ -110,12 +110,21 @@ export const projects = (client: Client) => {
                     query,
                     fields: ["Primary Skill", "Job Description"],
                     fuzziness: "AUTO",
+                    operator: "or",
                   },
                 },
               ],
             },
           },
           sort: [{ _score: { order: "desc" } }],
+          highlight: {
+            fields: {
+              "Primary Skill": { type: "unified" },
+              "Job Description": { type: "unified" },
+            },
+            pre_tags: ["[[HIGHLIGHT]]"],
+            post_tags: ["[[/HIGHLIGHT]]"],
+          },
         },
       });
 
@@ -129,6 +138,7 @@ export const projects = (client: Client) => {
       return {
         documents: res?.hits.hits.map((hit) => ({
           ...hit._source,
+          highlights: hit.highlight,
           score: hit._score,
         })),
         total,
@@ -146,6 +156,18 @@ export const projects = (client: Client) => {
 
       // TODO: check for errors or whatever can be returned
       return res.deleted;
+    },
+    count: async ({ ownedBy }: { ownedBy: string }) => {
+      const res = await client.count({
+        index: indexName,
+        body: {
+          query: {
+            term: { ownedBy },
+          },
+        },
+      });
+
+      return res.count;
     },
   };
 };

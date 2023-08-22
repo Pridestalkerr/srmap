@@ -68,11 +68,27 @@ export const employees = (client: Client) => {
       ownedBy,
       size,
       from,
+      benchOnly,
     }: {
       ownedBy: string;
       size: number;
       from: number;
+      benchOnly: boolean;
     }) => {
+      const must = benchOnly
+        ? [
+            { term: { ownedBy } },
+            {
+              bool: {
+                should: [
+                  { term: { "RAS Status Group": "Bench - AFD" } },
+                  { term: { "RAS Status Group": "Bench - Unproductive" } },
+                ],
+              },
+            },
+          ]
+        : [{ term: { ownedBy } }];
+
       const res = await client.search<Employee>({
         index: indexName,
         size,
@@ -80,17 +96,7 @@ export const employees = (client: Client) => {
         body: {
           query: {
             bool: {
-              must: [
-                { term: { ownedBy } },
-                {
-                  bool: {
-                    should: [
-                      { term: { "RAS Status Group": "Bench - AFD" } },
-                      { term: { "RAS Status Group": "Bench - Unproductive" } },
-                    ],
-                  },
-                },
-              ],
+              must,
             },
           },
         },
@@ -123,6 +129,18 @@ export const employees = (client: Client) => {
 
       // TODO: check for errors or whatever can be returned
       return res.deleted;
+    },
+    count: async ({ ownedBy }: { ownedBy: string }) => {
+      const res = await client.count({
+        index: indexName,
+        body: {
+          query: {
+            term: { ownedBy },
+          },
+        },
+      });
+
+      return res.count;
     },
   };
 };

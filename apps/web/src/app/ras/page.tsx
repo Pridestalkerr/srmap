@@ -96,7 +96,7 @@ export default function Home() {
                   ></Input>
                 </div>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center items-stretch">
                 <span>
                   SRs matching <span className="text-xl">{refinedSkills}</span>
                 </span>

@@ -70,6 +70,26 @@ export default function Home() {
 
   const rasUpload = api.ras.upload.useMutation({});
   const demandUpload = api.demand.upload.useMutation({});
+  const { isLoading, error, data } = api.sync.useQuery();
+
+  const {
+    data: rasClearData,
+    refetch: rasClearRefetch,
+    error: rasClearError,
+    isLoading: rasClearLoading,
+  } = api.ras.clear.useQuery(void 0, {
+    enabled: false,
+  });
+  const {
+    data: demandClearData,
+    refetch: demandClearRefetch,
+    error: demandClearError,
+    isLoading: demandClearLoading,
+  } = api.demand.clear.useQuery(void 0, {
+    enabled: false,
+  });
+
+  type x = typeof api.demand.clear;
 
   return (
     <div className="flex-grow flex flex-col justify-around items-center p-4">
@@ -86,6 +106,11 @@ export default function Home() {
             submitDisabled={rasFile === null}
             file={rasFile}
             setFile={setRasFile}
+            recordCount={data?.ras ?? 0}
+            clear={() => {
+              rasClearRefetch();
+            }}
+            path={api.ras}
           ></SyncZone>
 
           <Separator orientation="horizontal"></Separator>
@@ -93,6 +118,7 @@ export default function Home() {
           <SyncZone
             title="Demand"
             subTitle="Update or Clear your Demand records."
+            path={api.demand}
             submit={() => {
               demandUpload.mutate({
                 demand: demandBase64 as string, // TODO: fix this
@@ -101,33 +127,13 @@ export default function Home() {
             submitDisabled={demandFile === null}
             file={demandFile}
             setFile={setDemandFile}
+            recordCount={data?.demand ?? 0}
+            clear={() => {
+              demandClearRefetch();
+            }}
           ></SyncZone>
         </CardHeader>
       </Card>
-
-      {/* <div className="flex flex-col justify-center items-center gap-4">
-        <h1>Demand</h1>
-        <Dropzone
-          file={demandFile}
-          setFile={setDemandFile}
-          title="Demand Sheet"
-        ></Dropzone>
-        <Button
-          type="button"
-          onClick={() => {
-            demandUpload.mutate({
-              demand: demandBase64 as string, // TODO: fix this
-            });
-          }}
-          disabled={demandFile === null}
-        >
-          Submit
-        </Button>
-        {demandUpload.isLoading && <p>Uploading...</p>}
-        {demandUpload.isSuccess && (
-          <p>Uploaded {demandUpload.data.inserted} Documents!</p>
-        )}
-      </div> */}
     </div>
   );
 }

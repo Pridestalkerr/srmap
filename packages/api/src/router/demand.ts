@@ -67,6 +67,7 @@ export const demandRouter = router({
             "Primary Skill": z.string().optional(),
             Country: z.string().optional(),
             score: z.number().nullable().or(z.undefined()),
+            highlights: z.record(z.array(z.string())).optional(),
           })
         ),
         total: z.number().or(z.any()),
@@ -105,6 +106,28 @@ export const demandRouter = router({
       const deleted = await elastic.projects.clear({ ownedBy: session });
       return {
         deleted: deleted ?? 0,
+      };
+    }),
+  count: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/demand/count",
+        summary: "Count Demand",
+        description: "Count Demand",
+        tags: ["demand"],
+      },
+    })
+    .input(z.void())
+    .output(
+      z.object({
+        count: z.number(),
+      })
+    )
+    .query(async ({ ctx: { session } }) => {
+      const count = await elastic.projects.count({ ownedBy: session });
+      return {
+        count: count,
       };
     }),
 });

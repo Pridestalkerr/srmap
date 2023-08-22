@@ -53,6 +53,7 @@ export const rasRouter = router({
       z.object({
         size: z.number(),
         from: z.number(),
+        benchOnly: z.boolean(),
       })
     )
     .output(
@@ -69,12 +70,13 @@ export const rasRouter = router({
         total: z.number().or(z.any()),
       })
     )
-    .query(async ({ input: { size, from }, ctx: { session } }) => {
+    .query(async ({ input: { size, from, benchOnly }, ctx: { session } }) => {
       console.log("actually hitting", size, from, session);
       const results = await elastic.employees.scroll({
         ownedBy: session,
         size,
         from,
+        benchOnly,
       });
       return {
         results: results.documents,
@@ -103,6 +105,30 @@ export const rasRouter = router({
       });
       return {
         deleted: deleted ?? 0,
+      };
+    }),
+  count: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/ras/count",
+        summary: "Count RAS",
+        description: "Count RAS",
+        tags: ["ras"],
+      },
+    })
+    .input(z.void())
+    .output(
+      z.object({
+        count: z.number(),
+      })
+    )
+    .query(async ({ ctx: { session } }) => {
+      const count = await elastic.employees.count({
+        ownedBy: session,
+      });
+      return {
+        count: count,
       };
     }),
 });

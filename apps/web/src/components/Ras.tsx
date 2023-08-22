@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Filter, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import usePagination from "./Pagination";
 import { RouterOutputs, api } from "@/lib/trpc";
 import { useState, useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Employee = RouterOutputs["ras"]["scroll"]["results"][0];
 
@@ -76,7 +77,32 @@ export const columns: ColumnDef<Employee>[] = [
   },
   {
     accessorKey: "RAS Status Group",
-    header: () => <div className="text-right">RAS Status Group</div>,
+    header: () => {
+      return (
+        <div className="text-right">
+          RAS Status Group
+          {/* <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <Filter className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <DropdownMenuCheckboxItem
+                  checked={true}
+                  onChange={() => {}}
+                  // label="Bench - AFD"
+                >
+                  Bench Only
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const value = row.getValue("RAS Status Group");
       let format;
@@ -96,35 +122,35 @@ export const columns: ColumnDef<Employee>[] = [
       return format;
     },
   },
-  //   {
-  //     id: "actions",
-  //     enableHiding: false,
-  //     cell: ({ row }) => {
-  //       const payment = row.original;
+  // {
+  //   id: "actions",
+  //   enableHiding: false,
+  //   cell: ({ row }) => {
+  //     const payment = row.original;
 
-  //       return (
-  //         <DropdownMenu>
-  //           <DropdownMenuTrigger asChild>
-  //             <Button variant="ghost" className="h-8 w-8 p-0">
-  //               <span className="sr-only">Open menu</span>
-  //               <MoreHorizontal className="h-4 w-4" />
-  //             </Button>
-  //           </DropdownMenuTrigger>
-  //           <DropdownMenuContent align="end">
-  //             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //             <DropdownMenuItem
-  //               onClick={() => navigator.clipboard.writeText(payment.id)}
-  //             >
-  //               Copy payment ID
-  //             </DropdownMenuItem>
-  //             <DropdownMenuSeparator />
-  //             <DropdownMenuItem>View customer</DropdownMenuItem>
-  //             <DropdownMenuItem>View payment details</DropdownMenuItem>
-  //           </DropdownMenuContent>
-  //         </DropdownMenu>
-  //       );
-  //     },
+  //     return (
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  //           <DropdownMenuItem
+  //             onClick={() => navigator.clipboard.writeText(payment.id)}
+  //           >
+  //             Copy payment ID
+  //           </DropdownMenuItem>
+  //           <DropdownMenuSeparator />
+  //           <DropdownMenuItem>View customer</DropdownMenuItem>
+  //           <DropdownMenuItem>View payment details</DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     );
   //   },
+  // },
 ];
 export default function Ras({
   selected,
@@ -133,6 +159,7 @@ export default function Ras({
   selected: { [key: string]: any };
   setSelected: React.Dispatch<React.SetStateAction<{}>>;
 }) {
+  const [benchOnly, setBenchOnly] = useState(true);
   const [totalRows, setTotalRows] = useState(0);
   const { currentPage, onNextPage, onPrevPage, canGoBack, canGoNext } =
     usePagination({
@@ -144,6 +171,7 @@ export default function Ras({
     {
       size: 10,
       from: currentPage * 10 - 10,
+      benchOnly,
     },
     {
       enabled: true,
@@ -186,6 +214,21 @@ export default function Ras({
   });
   return (
     <div>
+      <div className="flex justify-end items-center gap-2 py-2">
+        <Checkbox
+          id="terms"
+          checked={benchOnly}
+          onClick={() => {
+            setBenchOnly(!benchOnly);
+          }}
+        />
+        <label
+          htmlFor="terms"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Bench Only
+        </label>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

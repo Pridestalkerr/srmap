@@ -48,6 +48,34 @@ import usePagination from "./Pagination";
 import { RouterOutputs, api } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 
+function applyHighlightsToOriginal(original: string, snippets: string[]) {
+  let result = original;
+  snippets.forEach((snippet) => {
+    const cleanSnippet = snippet
+      .replace("[[HIGHLIGHT]]", "")
+      .replace("[[/HIGHLIGHT]]", "");
+    result = result.replace(cleanSnippet, snippet);
+  });
+  return result;
+}
+
+function HighlightedText({ text }: { text: string }) {
+  const segments = text.split(/\[\[HIGHLIGHT\]\]|\[\[\/HIGHLIGHT\]\]/);
+  return (
+    <span>
+      {segments.map((segment, index) =>
+        index % 2 === 1 ? (
+          <strong className="bg-primary px-1 text-secondary" key={index}>
+            {segment}
+          </strong>
+        ) : (
+          segment
+        )
+      )}
+    </span>
+  );
+}
+
 type Project = RouterOutputs["demand"]["scroll"]["results"][0];
 
 export const columns: ColumnDef<Project>[] = [
@@ -103,23 +131,43 @@ export const columns: ColumnDef<Project>[] = [
   {
     accessorKey: "Job Description",
     header: "Job Description",
-    cell: ({ row }) => (
-      <div className="flex flex-row justify-center items-center">
-        <Dialog>
-          <DialogTrigger>
-            <Eye />
-          </DialogTrigger>
-          <DialogContent className="sm:min-w-[800px]">
-            <DialogHeader>
-              <DialogTitle>{row.getValue("Primary Skill")}</DialogTitle>
-              <DialogDescription>
-                {row.getValue("Job Description")}
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
-    ),
+    cell: ({ row }) => {
+      row.original;
+      const highlights = row.original["highlights"] as Record<string, string[]>;
+      const snippetsJD = highlights ? highlights["Job Description"] ?? [] : [];
+      const snippetsPS = highlights ? highlights["Primary Skill"] ?? [] : [];
+      console.log("snippetsJD: ", snippetsJD);
+      console.log("snippetsPS: ", snippetsPS);
+      return (
+        <div className="flex flex-row justify-center items-center">
+          <Dialog>
+            <DialogTrigger>
+              <Eye />
+            </DialogTrigger>
+            <DialogContent className="sm:min-w-[800px]">
+              <DialogHeader>
+                <DialogTitle>
+                  <HighlightedText
+                    text={applyHighlightsToOriginal(
+                      row.getValue("Primary Skill"),
+                      snippetsPS
+                    )}
+                  ></HighlightedText>
+                </DialogTitle>
+                <DialogDescription>
+                  <HighlightedText
+                    text={applyHighlightsToOriginal(
+                      row.getValue("Job Description"),
+                      snippetsJD
+                    )}
+                  ></HighlightedText>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+      );
+    },
   },
   //   {
   //     accessorKey: "Job Description",
@@ -210,7 +258,7 @@ export default function Demand({ skills }: { skills: string }) {
     },
   });
   return (
-    <div className="w-full">
+    <div className="">
       <div className="rounded-md border">
         <Table>
           <TableHeader>

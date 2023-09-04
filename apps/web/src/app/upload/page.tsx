@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import SyncZone from "@/components/SyncZone";
+import RasSync from "@/components/rasSync";
 
 export default function Home() {
   const [selected, setSelected] = useState<{}>({});
@@ -95,30 +96,14 @@ export default function Home() {
     <div className="flex-grow flex flex-col justify-around items-center p-4">
       <Card>
         <CardHeader className="flex flex-col gap-4">
-          <SyncZone
-            title="RAS"
-            subTitle="Update or Clear your RAS records."
-            submit={() => {
-              rasUpload.mutate({
-                ras: rasBase64 as string, // TODO: fix this
-              });
-            }}
-            submitDisabled={rasFile === null}
-            file={rasFile}
-            setFile={setRasFile}
-            recordCount={data?.ras ?? 0}
-            clear={() => {
-              rasClearRefetch();
-            }}
-            path={api.ras}
-          ></SyncZone>
+          <RasSync></RasSync>
 
           <Separator orientation="horizontal"></Separator>
 
           <SyncZone
             title="Demand"
             subTitle="Update or Clear your Demand records."
-            path={api.demand}
+            variant={"demand"}
             submit={() => {
               demandUpload.mutate({
                 demand: demandBase64 as string, // TODO: fix this

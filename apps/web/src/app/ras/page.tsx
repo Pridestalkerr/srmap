@@ -31,7 +31,7 @@ export default function Home() {
     if (selected === null) {
       return "";
     }
-    return selected["Skill"] + " " + additionalSkills;
+    return additionalSkills;
   }, [selected, additionalSkills]);
 
   return (

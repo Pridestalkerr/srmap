@@ -105,6 +105,7 @@ export const projects = (client: Client) => {
             bool: {
               must: [
                 { term: { ownedBy } },
+                { term: { Country: "Romania" } },
                 {
                   multi_match: {
                     query,

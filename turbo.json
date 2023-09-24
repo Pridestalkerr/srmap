@@ -18,10 +18,20 @@
       "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**", ".expo/**"]
     },
+    "db:studio": {
+      "persistent": true,
+      "cache": false
+    },
     "migrations:generate": {
       "cache": false
     },
     "migrations:apply": {
+      "cache": false
+    },
+    "migrations:drop": {
+      "cache": false
+    },
+    "migrations:seed": {
       "cache": false
     },
     "lint": {},

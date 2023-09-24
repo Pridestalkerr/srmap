@@ -33,6 +33,7 @@ export default function SyncZone({
   setFile,
   recordCount,
   clear,
+  variant,
 }: {
   title: string;
   subTitle: string;
@@ -42,7 +43,12 @@ export default function SyncZone({
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   recordCount: number;
   clear: () => void;
+  variant: "ras" | "demand";
 }) {
+  const path = variant === "ras" ? api.ras : api.demand;
+  const upload = path.upload.useMutation();
+  const count = variant === "ras" ? api.ras.count.useQuery() : api.demand.count.useQuery();
+
   return (
     <div
       className={cn("flex flex-col gap-2", {

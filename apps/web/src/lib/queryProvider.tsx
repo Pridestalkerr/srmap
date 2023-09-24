@@ -16,7 +16,7 @@ export default function QueryProvider({ children }: PropsWithChildren) {
       links: [
         httpBatchLink({
           // TODO: define the route in api package
-          url: "http://192.168.1.128:3333/api/trpc",
+          url: "http://172.27.131.11:3333/api/trpc",
           fetch(url, options) {
             return fetch(url, {
               ...options,

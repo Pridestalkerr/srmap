@@ -9,7 +9,12 @@
     "dev": "dotenv -- turbo dev --parallel",
     "lint": "turbo lint && manypkg check",
     "lint:fix": "turbo lint:fix && manypkg fix",
-    "check": "manypkg upgrade @trpc/server@10.34.0 @trpc/client@10.34.0"
+    "check": "manypkg upgrade @trpc/server@10.34.0 @trpc/client@10.34.0",
+    "db:studio": "dotenv -- turbo db:studio",
+    "migrations:generate": "dotenv -- turbo migrations:generate",
+    "migrations:apply": "dotenv -- turbo migrations:apply",
+    "migrations:drop": "dotenv -- turbo migrations:drop",
+    "migrations:seed": "dotenv -- turbo migrations:seed"
   },
   "dependencies": {
     "@manypkg/cli": "^0.21.0",

@@ -133,7 +133,7 @@ export const projects = (client: Client) => {
       if (res.hits.total instanceof Object) {
         total = res.hits.total.value;
       } else {
-        total = res.hits.total || 0;
+        total = res.hits.total ?? 0;
       }
 
       return {

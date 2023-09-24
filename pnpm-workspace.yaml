@@ -7,3 +7,4 @@ packages:
   - apps/server
   - packages/elastic
   - packages/api
+  - packages/db

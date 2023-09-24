@@ -23,7 +23,7 @@ export default function RootLayout({
       <head />
       <QueryProvider>
         <body
-          className={cn("flex min-h-screen flex-col w-full", inter.className)}
+          className={cn("flex flex-col min-h-screen w-screen", inter.className)}
           suppressHydrationWarning={true}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

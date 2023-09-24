@@ -41,6 +41,7 @@ export default function Navbar() {
         </div>
         <Route href="/upload" tag="Upload" current={currentRoute} />
         <Route href="/ras" tag="RAS" current={currentRoute} />
+        <Route href="/skills" tag="SKILLS" current={currentRoute} />
         {/* <Route href="/demand" tag="Demand" current={currentRoute} /> */}
       </div>
       <div className="flex flex-row w-full justify-end gap-4">

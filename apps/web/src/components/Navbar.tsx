@@ -33,15 +33,16 @@ export default function Navbar() {
   const currentRoute = usePathname();
 
   return (
-    <div className="bg-background flex flex-row w-full py-4 px-24 justify-around items-center border-b border-solid">
+    <div className="bg-background flex flex-row w-full py-4 px-24 justify-around items-center border-b border-solid sticky top-0 z-50">
       <div className="flex flex-row gap-10 items-center">
         <div className="flex flex-row items-center gap-2">
           <Users></Users>
           <h1 className="text-2xl font-semibold">SRMap</h1>
         </div>
+        <Route href="/jobs" tag="JOBS" current={currentRoute} />
+        <Route href="/skills" tag="SKILLS" current={currentRoute} />
         <Route href="/upload" tag="Upload" current={currentRoute} />
         <Route href="/ras" tag="RAS" current={currentRoute} />
-        <Route href="/skills" tag="SKILLS" current={currentRoute} />
         {/* <Route href="/demand" tag="Demand" current={currentRoute} /> */}
       </div>
       <div className="flex flex-row w-full justify-end gap-4">

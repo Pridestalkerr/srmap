@@ -23,7 +23,10 @@ export default function RootLayout({
       <head />
       <QueryProvider>
         <body
-          className={cn("flex flex-col min-h-screen w-screen", inter.className)}
+          className={cn(
+            "flex flex-col overflow-x-hidden m-0 p-0",
+            inter.className
+          )}
           suppressHydrationWarning={true}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

@@ -2,10 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TODO: this works somehow lmao */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary) var(--primary);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted-foreground));
+  border-radius: 10px;
+}
+
 @layer utilities {
   .masonry {
     column-count: 2;
-    column-gap: 1rem; /* This is for space between columns */
+    column-gap: 0.5rem; /* This is for space between columns */
   }
   .masonry > * {
     break-inside: avoid;
@@ -72,4 +95,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  width: auto;
+  gap: 0.5rem;
+}
+.my-masonry-grid_column {
+  background-clip: padding-box;
+}
+
+/* Style your items */
+.my-masonry-grid_column > div {
+  margin-bottom: 0.5rem;
 }

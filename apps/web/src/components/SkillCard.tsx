@@ -175,7 +175,7 @@ const SkillCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <CardDescription className="line-clamp-5">
+        <CardDescription>
           <TruncatedParagraph text={description}></TruncatedParagraph>
         </CardDescription>
       </CardContent>

@@ -28,16 +28,12 @@ import SkillCard from "@/components/SkillCard";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-const partition = (arr: any[], size: number, offset: number) => {
-  let result = [];
-  for (let i = offset; i < arr.length; i += size) {
-    result.push(arr[i]);
-  }
-  return result;
-};
+import Masonry from "react-masonry-css";
+import CategoryOption from "@/components/CategoryOption";
 
 export default function Home() {
   const [skillSearchQuery, setSkillSearchQuery] = useState<string>("");
+  const [categorySearchQuery, setCategorySearchQuery] = useState<string>("");
 
   const { data, refetch } = api.skills.categories.useQuery(void 0, {
     enabled: true,
@@ -46,149 +42,103 @@ export default function Home() {
 
   const { data: skills, refetch: refetchSkills } = api.skills.skills.useQuery({
     from: 0,
-    size: 10,
-    query: "english language",
+    size: 9,
+    query: skillSearchQuery,
   });
 
   return (
-    <div className="flex flex-row justify-center p-2 gap-2">
-      <Card className="min-w-[300px]">
-        <CardHeader>
-          <CardTitle>Categories</CardTitle>
-          <CardDescription className="flex flex-row gap-1">
-            <Search width={18}></Search>
-            <input placeholder="search for skills"></input>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="overflow-y-scroll h-[600px]">
-          <div className="flex flex-col gap-1">
-            {data?.records.map((category) => (
-              <Card className="w-[250px]" key={category.id}>
-                <CardDescription>{category.name}</CardDescription>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+    <div className="flex flex-row justify-center p-2 gap-4">
       <div className="flex flex-col gap-2">
+        <Card className="w-80">
+          <CardHeader>
+            <CardTitle>Categories</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-row gap-1">
+              <Input
+                placeholder="Search for categories"
+                value={categorySearchQuery}
+                onChange={(event) => setCategorySearchQuery(event.target.value)}
+              >
+                <SearchIcon width={18}></SearchIcon>
+              </Input>
+            </div>
+            <div className="flex flex-col p-2 gap-2 h-48 overflow-y-scroll rounded-md border border-input">
+              {data?.records
+                .filter((category) => !category.isSubcategory)
+                .map((category) => (
+                  <CategoryOption
+                    key={category.id}
+                    name={category.name}
+                  ></CategoryOption>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-80">
+          <CardHeader>
+            <CardTitle>Subcategories</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-row gap-1">
+              <Input
+                placeholder="Search for subcategories"
+                value={categorySearchQuery}
+                onChange={(event) => setCategorySearchQuery(event.target.value)}
+              >
+                <SearchIcon width={18}></SearchIcon>
+              </Input>
+            </div>
+            <div className="flex flex-col p-2 gap-2 h-48 overflow-y-scroll rounded-md border border-input">
+              {data?.records
+                .filter((category) => category.isSubcategory)
+                .map((category) => (
+                  <CategoryOption
+                    key={category.id}
+                    name={category.name}
+                  ></CategoryOption>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex flex-col gap-4 items-end">
         <Input
           placeholder="Search for skills"
           value={skillSearchQuery}
           onChange={(event) => setSkillSearchQuery(event.target.value)}
-          className="w-[350px]"
         >
           <SearchIcon width={18}></SearchIcon>
         </Input>
-        <div className="masonry">
+
+        <Masonry
+          breakpointCols={3}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {skills?.records.map((skill) => (
-            <SkillCard
-              key={skill.id}
-              name={skill.name}
-              category={
-                skill.category?.name === "NULL" ? null : skill.category?.name
-              }
-              subcategory={
-                skill.subcategory?.name === "NULL"
-                  ? null
-                  : skill.subcategory?.name
-              }
-              isLanguage={skill.isLanguage}
-              isSoftware={skill.isSoftware}
-              type={skill.type}
-              description={skill.description}
-              descriptionUrl={skill.descriptionSource}
-            ></SkillCard>
+            <div key={skill.id}>
+              <SkillCard
+                name={skill.name}
+                category={
+                  skill.category?.name === "NULL" ? null : skill.category?.name
+                }
+                subcategory={
+                  skill.subcategory?.name === "NULL"
+                    ? null
+                    : skill.subcategory?.name
+                }
+                isLanguage={skill.isLanguage}
+                isSoftware={skill.isSoftware}
+                type={skill.type}
+                description={skill.description}
+                descriptionUrl={skill.descriptionSource}
+              ></SkillCard>
+            </div>
           ))}
-          {/* {skills &&
-              partition(skills.records, 4, 0).map((skill) => (
-                <SkillCard
-                  key={skill.id}
-                  name={skill.name}
-                  category={
-                    skill.category?.name === "NULL"
-                      ? null
-                      : skill.category?.name
-                  }
-                  subcategory={
-                    skill.subcategory?.name === "NULL"
-                      ? null
-                      : skill.subcategory?.name
-                  }
-                  isLanguage={skill.isLanguage}
-                  isSoftware={skill.isSoftware}
-                  type={skill.type}
-                  description={skill.description}
-                  descriptionUrl={skill.descriptionSource}
-                ></SkillCard>
-              ))}
-            {skills &&
-              partition(skills.records, 4, 1).map((skill) => (
-                <SkillCard
-                  key={skill.id}
-                  name={skill.name}
-                  category={
-                    skill.category?.name === "NULL"
-                      ? null
-                      : skill.category?.name
-                  }
-                  subcategory={
-                    skill.subcategory?.name === "NULL"
-                      ? null
-                      : skill.subcategory?.name
-                  }
-                  isLanguage={skill.isLanguage}
-                  isSoftware={skill.isSoftware}
-                  type={skill.type}
-                  description={skill.description}
-                  descriptionUrl={skill.descriptionSource}
-                ></SkillCard>
-              ))}
-          <div className="grid gap-4 overflow-hidden">
-            {skills &&
-              partition(skills.records, 4, 2).map((skill) => (
-                <SkillCard
-                  key={skill.id}
-                  name={skill.name}
-                  category={
-                    skill.category?.name === "NULL"
-                      ? null
-                      : skill.category?.name
-                  }
-                  subcategory={
-                    skill.subcategory?.name === "NULL"
-                      ? null
-                      : skill.subcategory?.name
-                  }
-                  isLanguage={skill.isLanguage}
-                  isSoftware={skill.isSoftware}
-                  type={skill.type}
-                  description={skill.description}
-                  descriptionUrl={skill.descriptionSource}
-                ></SkillCard>
-              ))}
-            {skills &&
-              partition(skills.records, 4, 3).map((skill) => (
-                <SkillCard
-                  key={skill.id}
-                  name={skill.name}
-                  category={
-                    skill.category?.name === "NULL"
-                      ? null
-                      : skill.category?.name
-                  }
-                  subcategory={
-                    skill.subcategory?.name === "NULL"
-                      ? null
-                      : skill.subcategory?.name
-                  }
-                  isLanguage={skill.isLanguage}
-                  isSoftware={skill.isSoftware}
-                  type={skill.type}
-                  description={skill.description}
-                  descriptionUrl={skill.descriptionSource}
-                ></SkillCard>
-              ))} */}
-        </div>
+        </Masonry>
       </div>
     </div>
   );
